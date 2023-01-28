@@ -35,7 +35,7 @@ def get_from_windows(command):
         command,
         shell=True,
         stdout=subprocess.PIPE,
-        encoding='cp-1251'
+        encoding='cp1251'
     ).stdout
     return result.encode().decode('utf-8').strip()
 
