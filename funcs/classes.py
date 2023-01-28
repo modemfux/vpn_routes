@@ -1,7 +1,7 @@
 import json
 import time
 import paramiko
-from nix_functions import get_ip_addresses_from_url
+from funcs.nix_functions import get_ip_addresses_from_url
 
 
 class OwnSSH:
@@ -37,6 +37,7 @@ class OwnSSH:
 
     def __exit__(self, exc_type, exc_value, traceback):
         self.ssh.close()
+        print(f'SSH connection to {self.ip} is closed.')
 
     # Methods for interacting with Linux
 
@@ -80,8 +81,9 @@ class OwnSSH:
         urls,
         nexthop,
         server='8.8.8.8',
-        filename='vpn_routes.json'
-        ):
+        filename='vpn_routes.json',
+        write_to_file=False
+    ):
         if not isinstance(urls, list):
             urls = [urls]
         ip_list, url_dict = get_ip_addresses_from_url(
@@ -90,12 +92,15 @@ class OwnSSH:
             full_result=True
         )
         backup = 'previous_' + filename
-        with open(filename) as src, open(backup, 'w') as dst:
-            json_urls = json.load(src)
-            dst.write(json.dumps(json_urls))
-        with open(filename, 'w') as dst:
-            dst.write(json.dumps(url_dict))
-        routes = [f'ip route {ip} 255.255.255.255 {nexthop} tag 65001' for ip in ip_list]
+        if write_to_file:
+            with open(filename) as src, open(backup, 'w') as dst:
+                json_urls = json.load(src)
+                dst.write(json.dumps(json_urls))
+            with open(filename, 'w') as dst:
+                dst.write(json.dumps(url_dict))
+        routes = [f'ip route {ip} 255.255.255.255 {nexthop} tag 65001'
+                  for ip in ip_list
+                  ]
         return routes
 
     # Methods for interacting with FRR
@@ -131,8 +136,8 @@ class OwnSSH:
         if self.is_vtysh:
             self.ssh.send('\nend\n')
             time.sleep(0.5)
-            output = self.ssh.recv(5000)
+            output = self.ssh.recv(5000).decode('utf-8')
             self.ssh.send('write memory\n')
             time.sleep(2)
-            output += self.ssh.recv(5000)
+            output += self.ssh.recv(5000).decode('utf-8')
             return output if not silent else None
