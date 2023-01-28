@@ -1,2 +1,0 @@
-NAME = 'vpn_routes'
-
