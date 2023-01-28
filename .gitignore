@@ -3,6 +3,7 @@
 *.un~
 *.pyc
 *.swp
+*.bak
 
 # VSCode files
 .vscode/
