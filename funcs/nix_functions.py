@@ -47,9 +47,6 @@ def get_a_record_from_server(url, server='8.8.8.8'):
         'dig': f'dig @{server} {url} +short',
         'nsl': f'nslookup -type=A {url} {server}'
     }
-
-    print(os.name)
-    
     if os.name == 'nt':
         reg_ip = r'((?:\d+[.]){3}\d+)'
         output = get_from_windows(request_dict['nsl'])
