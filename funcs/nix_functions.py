@@ -1,5 +1,6 @@
 import re
 import subprocess
+import os
 
 
 def is_ip_address(ip):
@@ -29,6 +30,16 @@ def get_from_nix(command):
     return result.stdout.strip()
 
 
+def get_from_windows(command):
+    result = subprocess.run(
+        command,
+        shell=True,
+        stdout=subprocess.PIPE,
+        encoding='cp-1251'
+    ).stdout
+    return result.encode().decode('utf-8').strip()
+
+
 def get_a_record_from_server(url, server='8.8.8.8'):
     if not is_ip_address(server):
         raise TypeError(f"Incorrect server's IP: {server}")
@@ -36,13 +47,21 @@ def get_a_record_from_server(url, server='8.8.8.8'):
         'dig': f'dig @{server} {url} +short',
         'nsl': f'nslookup -type=A {url} {server}'
     }
-    if get_from_nix('which dig'):
-        output = get_from_nix(request_dict['dig'])
-        ip_list = [ip for ip in output.split('\n')]
-    else:
-        reg_ip = r'Address: (\d+[.]\d+[.]\d+[.]\d+)'
-        output = get_from_nix(request_dict['nsl'])
-        ip_list = [ip.group(1) for ip in re.finditer(reg_ip, output)]
+
+    print(os.name)
+    
+    if os.name == 'nt':
+        reg_ip = r'((?:\d+[.]){3}\d+)'
+        output = get_from_windows(request_dict['nsl'])
+        ip_list = [ip.group(1) for ip in list(re.finditer(reg_ip, output))[1:]]
+    elif os.name == 'posix':
+        if get_from_nix('which dig'):
+            output = get_from_nix(request_dict['dig'])
+            ip_list = [ip for ip in output.split('\n')]
+        else:
+            reg_ip = r'Address: (\d+[.]\d+[.]\d+[.]\d+)'
+            output = get_from_nix(request_dict['nsl'])
+            ip_list = [ip.group(1) for ip in re.finditer(reg_ip, output)]
     return {url: ip_list}
 
 
