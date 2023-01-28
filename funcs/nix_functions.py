@@ -46,7 +46,7 @@ def get_a_record_from_server(url, server='8.8.8.8'):
     return {url: ip_list}
 
 
-def get_ip_addresses_from_url(url_list, server='8.8.8.8'):
+def get_ip_addresses_from_url(url_list, server='8.8.8.8', full_result=False):
     if not is_ip_address(server):
         raise TypeError(f"Incorrect server's IP: {server}")
     if not isinstance(url_list, list):
@@ -58,4 +58,4 @@ def get_ip_addresses_from_url(url_list, server='8.8.8.8'):
     for ips in result_dict.values():
         mid_list += ips
     result = sorted(list(set(mid_list)))
-    return result
+    return result if not full_result else (result, result_dict)
