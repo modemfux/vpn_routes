@@ -2,6 +2,16 @@ import json
 import time
 import paramiko
 from funcs.nix_functions import get_ip_addresses_from_url
+import logging
+
+
+# Logging config
+own_logger = logging.getLogger(__name__)
+own_logger.setLevel(logging.INFO)
+own_handler = logging.FileHandler('vpn_routes.log', mode='a')
+own_format = logging.Formatter("%(asctime)s >> %(levelname)s: %(message)s")
+own_handler.setFormatter(own_format)
+own_logger.addHandler(own_handler)
 
 
 class OwnSSH:
@@ -11,15 +21,35 @@ class OwnSSH:
         self._password = password
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(
-            hostname=self.ip,
-            username=self.username,
-            password=self._password,
-            look_for_keys=keys_needed,
-            allow_agent=keys_needed
-        )
-        self.ssh = client.invoke_shell()
-        print(f'Connection to {self.ip} established.')
+        try:
+            client.connect(
+                hostname=self.ip,
+                username=self.username,
+                password=self._password,
+                look_for_keys=keys_needed,
+                allow_agent=keys_needed,
+                timeout=30.0
+            )
+            connection_state = True
+        except TimeoutError as error:
+            own_logger.error(f'Connection to {self.ip} is {error}')
+            print(f'Connection to {self.ip} is {error}')
+            connection_state = False
+            raise TimeoutError
+        except Exception as error:
+            own_logger.error(f'Some error occured while connecting '
+                             f'to {self.ip}. Error is: {error}'
+                             )
+            raise Exception(error)
+        if connection_state:
+            try:
+                self.ssh = client.invoke_shell()
+                print(f'Connection to {self.ip} established.')
+            except Exception:
+                own_logger.exception(f"There are some problems "
+                                     f"with connection to {self.ip}. "
+                                     "Check device's parameters."
+                                     )
 
     def close(self):
         self.ssh.close()
@@ -91,11 +121,21 @@ class OwnSSH:
             server,
             full_result=True
         )
+        for url, addresses in url_dict.items():
+            own_logger.info(f'For URL \'{url}\' were given those IPs: '
+                            f'{", ".join(addresses)}'
+                            )
         backup = 'previous_' + filename
         if write_to_file:
             with open(filename) as src, open(backup, 'w') as dst:
-                json_urls = json.load(src)
-                dst.write(json.dumps(json_urls))
+                try:
+                    json_urls = json.load(src)
+                    dst.write(json.dumps(json_urls))
+                except Exception as error:
+                    own_logger.error(
+                        f'There were some error with file {filename}.'
+                        f' Probably it was empty. Error: {error}'
+                    )
             with open(filename, 'w') as dst:
                 dst.write(json.dumps(url_dict))
         routes = [f'ip route {ip} 255.255.255.255 {nexthop} tag 65001'
@@ -127,6 +167,9 @@ class OwnSSH:
                 self.ssh.send(command + '\n')
                 time.sleep(0.5)
                 output += self.ssh.recv(5000).decode('utf-8')
+                own_logger.info(
+                    f'Command {command} was executed on {self.ip}.'
+                )
             self.ssh.send('end\n')
             time.sleep(0.5)
             output += self.ssh.recv(5000).decode('utf-8')
@@ -140,4 +183,5 @@ class OwnSSH:
             self.ssh.send('write memory\n')
             time.sleep(2)
             output += self.ssh.recv(5000).decode('utf-8')
+            own_logger.info(f'Configuration on {self.ip} saved.')
             return output if not silent else None
