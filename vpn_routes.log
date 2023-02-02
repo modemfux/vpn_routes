@@ -1,0 +1,4 @@
+2023-02-02 21:04:56,675 >> INFO: For URL 'rutracker.org' were given those IPs: 172.67.187.38, 104.21.72.173
+2023-02-02 21:05:00,187 >> INFO: Command ip route 104.21.72.173 255.255.255.255 195.2.93.1 tag 65001 was executed on 195.2.93.231.
+2023-02-02 21:05:00,690 >> INFO: Command ip route 172.67.187.38 255.255.255.255 195.2.93.1 tag 65001 was executed on 195.2.93.231.
+2023-02-02 21:05:03,701 >> INFO: Configuration on 195.2.93.231 saved.

@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "vpn-routes"
+version = "0.1.0"
+description = "Designated to add new static routes to FRR via SSH connection"
+authors = ["modemfux <modemfux@gmail.com>"]
+readme = "README.md"
+packages = [{include = "vpn_routes"}]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+paramiko = "^2.12.0"
+
+
+[tool.poetry.scripts]
+vpn-routes = "vpn_routes.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
