@@ -7,12 +7,15 @@ readme = "README.md"
 packages = [{include = "vpn_routes"}]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.8.1"
 paramiko = "^2.12.0"
 
 
 [tool.poetry.scripts]
 vpn-routes = "vpn_routes.main:main"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
 
 [build-system]
 requires = ["poetry-core"]
