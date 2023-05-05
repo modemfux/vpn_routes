@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vpn-routes"
-version = "0.1.0"
+version = "0.2.0"
 description = "Designated to add new static routes to FRR via SSH connection"
 authors = ["modemfux <modemfux@gmail.com>"]
 readme = "README.md"
