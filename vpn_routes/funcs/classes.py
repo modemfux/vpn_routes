@@ -3,11 +3,11 @@ import time
 import paramiko
 import logging
 from vpn_routes.funcs.nix_functions import get_ip_addresses_from_url
-from vpn_routes.funcs.nix_functions import create_script_folder
+from vpn_routes.funcs.nix_functions import work_with_script_folder
 
 
 # Logging config
-own_folder = create_script_folder()
+own_folder = work_with_script_folder()
 logfile = own_folder + '/vpn_routes.log'
 own_logger = logging.getLogger(__name__)
 own_logger.setLevel(logging.INFO)

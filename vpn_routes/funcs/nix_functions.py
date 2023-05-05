@@ -77,7 +77,7 @@ def get_ip_addresses_from_url(url_list, server='8.8.8.8', full_result=False):
     return result if not full_result else (result, result_dict)
 
 
-def create_script_folder():
+def work_with_script_folder():
     home_dir = os.getenv('HOME')
     if home_dir and os.path.exists(home_dir):
         routes_dir = home_dir + '/.vpn_routes'
