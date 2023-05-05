@@ -3,3 +3,7 @@ lint:
 
 build:
 	poetry build
+
+main:
+	poetry run python -m vpn_routes.main
+
