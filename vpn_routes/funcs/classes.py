@@ -15,21 +15,19 @@ own_logger.addHandler(own_handler)
 
 
 class OwnSSH:
-    def __init__(self, ip, username, password, keys_needed=False):
+    def __init__(self, ip, username, password, keys_needed=True):
         self.ip = ip
         self.username = username
         self._password = password
         client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.client.AutoAddPolicy)
         try:
             client.connect(
                 hostname=self.ip,
                 username=self.username,
                 password=self._password,
-                look_for_keys=keys_needed,
-                allow_agent=keys_needed,
-                timeout=30.0
-            )
+                timeout=30.0)
             connection_state = True
         except TimeoutError as error:
             own_logger.error(f'Connection to {self.ip} is {error}')
