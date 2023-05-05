@@ -9,6 +9,7 @@ packages = [{include = "vpn_routes"}]
 [tool.poetry.dependencies]
 python = "^3.8.1"
 paramiko = "^2.12.0"
+pyyaml = "^6.0"
 
 
 [tool.poetry.scripts]
