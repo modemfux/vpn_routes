@@ -1,14 +1,17 @@
 import json
 import time
 import paramiko
-from vpn_routes.funcs.nix_functions import get_ip_addresses_from_url
 import logging
+from vpn_routes.funcs.nix_functions import get_ip_addresses_from_url
+from vpn_routes.funcs.nix_functions import create_script_folder
 
 
 # Logging config
+own_folder = create_script_folder()
+logfile = own_folder + '/vpn_routes.log'
 own_logger = logging.getLogger(__name__)
 own_logger.setLevel(logging.INFO)
-own_handler = logging.FileHandler('vpn_routes.log', mode='a')
+own_handler = logging.FileHandler(logfile, mode='a')
 own_format = logging.Formatter("%(asctime)s >> %(levelname)s: %(message)s")
 own_handler.setFormatter(own_format)
 own_logger.addHandler(own_handler)
