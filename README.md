@@ -10,7 +10,7 @@ Used to add new static routes to FRR installed on VPS via establishing SSH conne
 08:42 $ make main
 poetry run python -m vpn_routes.main
 Не хватает параметра ip. Введите его: 192.0.2.10
-Для адреса 195.2.93.231 есть сохраненные данные: Пользователь modemfux, nexthop 192.0.2.1.
+Для адреса 192.0.2.10 есть сохраненные данные: Пользователь modemfux, nexthop 192.0.2.1.
 Хотите воспользоваться ими?[Y/n]: n
 Не хватает параметра username. Введите его: modemfux
 Не хватает параметра password. Введите его:
