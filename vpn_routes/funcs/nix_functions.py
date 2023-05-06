@@ -78,9 +78,14 @@ def get_ip_addresses_from_url(url_list, server='8.8.8.8', full_result=False):
 
 
 def work_with_script_folder():
-    home_dir = os.getenv('HOME')
+    os_type = os.name
+    match os_type:
+        case 'nt':
+            home_dir = os.getenv('HOMEDRIVE') + os.getenv('HOMEPATH') + '\\'
+        case 'posix':
+            home_dir = os.getenv('HOME') + '/'
     if home_dir and os.path.exists(home_dir):
-        routes_dir = home_dir + '/.vpn_routes'
+        routes_dir = home_dir + '.vpn_routes'
         if not os.path.exists(routes_dir):
             os.mkdir(routes_dir)
         return routes_dir
