@@ -42,18 +42,18 @@ def get_remote_device_data(device={}):
             device['username'] = user
             device['password'] = password
             return nexthop, device
-    else:
-        known_routers[ip] = {}
-        username = input('Не хватает параметра username. Введите его: ')
-        password = getpass('Не хватает параметра password. Введите его: ')
-        nexthop = input('Не хватает адреса nexthop. Введите его: ')
-        device['username'] = username
-        device['password'] = password
-        known_routers[ip]['username'] = username
-        known_routers[ip]['nexthop'] = nexthop
-        key, enc_pass = encrypt_password(password)
-        known_routers[ip]['key'] = key
-        known_routers[ip]['password'] = enc_pass
-        with open(memory_file, 'w') as dst:
-            yaml.safe_dump(known_routers, dst)
-        return nexthop, device
+
+    known_routers[ip] = {}
+    username = input('Не хватает параметра username. Введите его: ')
+    password = getpass('Не хватает параметра password. Введите его: ')
+    nexthop = input('Не хватает адреса nexthop. Введите его: ')
+    device['username'] = username
+    device['password'] = password
+    known_routers[ip]['username'] = username
+    known_routers[ip]['nexthop'] = nexthop
+    key, enc_pass = encrypt_password(password)
+    known_routers[ip]['key'] = key
+    known_routers[ip]['password'] = enc_pass
+    with open(memory_file, 'w') as dst:
+        yaml.safe_dump(known_routers, dst)
+    return nexthop, device
